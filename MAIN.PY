@@ -49,10 +49,10 @@ if op==1:
                   print("================================================================================") 
                   s=int(input("Enter the amount to be deposited : "))
                   print("================================================================================")
-                  sr="update records set  CR_AMT={} where ACCOUNT_NO={}".format(s,m)
+                  sr="update records set  CREDIT_AMT={} where ACCOUNT_NO={}".format(s,m)
                   c1.execute(sr)
                   conn.commit()
-                  ef="update records set balance=cr_amt-withdrawl where ACCOUNT_NO={}".format(m)
+                  ef="update records set balance=CREDIT_AMT-withdrawl where ACCOUNT_NO={}".format(m)
                   c1.execute(ef)
                   conn.commit()
                   print("SUCCESSFULLY DEPOSITED")
@@ -99,21 +99,31 @@ if op==2:
                         if r==1:
                               amt=int(input("Enter the amount of money to be deposited : "))
                               print("================================================================================")
-                              sr="update records set CR_AMT=CR_AMT + {} where ACCOUNT_NO={}".format(amt,acct)
-                              c1.execute(sr)
-                              conn.commit()
-                              ef="update records set balance=cr_amt-withdrawl where ACCOUNT_NO={}".format(acct)
-                              c1.execute(ef)
-                              conn.commit()
-                              print("SUCCESSFULLY DEPOSITED")
-                              print("================================================================================")
-                              t=input("Do you want to continue y/n -")
-                              print("================================================================================")
-                              if t=="y" or t=="Y":
-                                    continue
+                              ma="select balance from records where account_no={}".format(acct)
+                              c1.execute(ma)
+                              k=c1.fetchone()
+                              if((amt+k[0])<1000):
+                                  print("Minimum balnce required is rs1000")
+                                  print("================================================================================")
                               else:
-                                    print("THANK YOU")
-                                    print("PLEASE CLOSE THIS FILE BEFORE CLOSING THIS WINDOW")
+                                  print("================================================================================")
+                                  sr="update records set CREDIT_AMT=CREDIT_AMT + {} where ACCOUNT_NO={}".format(amt,acct)
+                                  c1.execute(sr)
+                                  conn.commit()
+                                  ef="update records set balance=CREDIT_AMT-withdrawl where ACCOUNT_NO={}".format(acct)
+                                  c1.execute(ef)
+                                  conn.commit()
+                                  print("SUCCESSFULLY DEPOSITED")
+                                  print("================================================================================")
+                                  t=input("Do you want to continue y/n -")
+                                  if t=="y" or t=="Y":
+                                      continue
+                                  else:
+                                      print("THANK YOU")
+                                      print("PLEASE CLOSE THIS FILE BEFORE CLOSING THIS WINDOW")
+                                      break
+                                  
+                              
                         if r==2:
                               amt=int(input("Enter the money to withdraw : "))
                               print("================================================================================")
@@ -166,7 +176,7 @@ if op==2:
                                           av="update records set balance=balance-{} where ACCOUNT_NO={}".format(m,acct)  
                                           cv="update records set balance=balance+{} where ACCOUNT_NO={}".format(m,act)
                                           w="update records set withdrawl=withdrawl+{} where account_no={}".format(m,acct)
-                                          t="update records set  CR_AMT=CR_AMT+{} where account_no={}".format(m,act)
+                                          t="update records set  CREDIT_AMT=CREDIT_AMT+{} where account_no={}".format(m,act)
                                           c1.execute(av)
                                           c1.execute(cv)
                                           c1.execute(w)
@@ -181,6 +191,7 @@ if op==2:
                                           print("THANK YOU")
                                           print("PLEASE CLOSE THIS FILE BEFORE CLOSING THIS WINDOW")
                                           print("================================================================================")
+                            
                         if r==4:
                               ma="select balance from records where account_no={}".format(acct)
                               c1.execute(ma)
